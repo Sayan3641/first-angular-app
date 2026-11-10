@@ -3,6 +3,8 @@ import { required } from '@angular/forms/signals';
 import { Task } from './task/task';
 import { dummyTasks } from '../dummy-tasks';
 import { NewTask } from '../new-task/new-task';
+import { newTaskData } from './task/task.model';
+import { TasksService } from './tasks.service';
 
 @Component({
   selector: 'app-tasks',
@@ -12,26 +14,26 @@ import { NewTask } from '../new-task/new-task';
 })
 export class Tasks {
 
-
   @Input({ required: true }) userId!: string;
   @Input({ required: true }) name!: string
   isAddingTask = false;
   tasks = dummyTasks;
 
+  constructor(private tasksService: TasksService) { }
+
   get selectedUserTasks() {
-    return this.tasks.filter((task) => task.userId === this.userId)
+    return this.tasksService.getUserTasks(this.userId);
   }
 
   onCompleteTask(id: string) {
-    console.log('output emitted')
-    this.tasks = this.tasks.filter((task) => task.id !== id)
+    this.tasksService.removeTask(id);
   }
 
   onStartAddTask() {
     this.isAddingTask = true;
   }
 
-  onCancelAddTask() {
-    this.isAddingTask=false;
+  onCloseAddTask() {
+    this.isAddingTask = false;
   }
 }
